@@ -5,7 +5,7 @@ import e32
 import appuifw
 import graphics
 
-class GraphicField:
+class GraphicBase:
 
     def __init__(self, bg_color=(0, 0, 0)):
         """ Constructor
@@ -28,7 +28,21 @@ class GraphicField:
         self.draw = None
 
 
-class Game(GraphicField):
+class Graphics(GraphicBase):
+    """ All drawing login here """
+
+    def __init__(self):
+        pass
+
+
+class GameCore:
+    """ All game logic here """
+
+    def __init__(self):
+        pass
+
+
+class Game():
 
     INTERVAL = 0.01
 
@@ -38,7 +52,7 @@ class Game(GraphicField):
                 screen_mode (str): normal, large, full
         """
         appuifw.app.screen = screen_mode
-        GraphicField.__init__(self)
+        #
         appuifw.app.menu = [
             (u"Exit", self.set_exit)
         ]
