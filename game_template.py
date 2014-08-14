@@ -5,7 +5,7 @@ import e32
 import appuifw
 import graphics
 
-class GraphicBase:
+class GraphicBase(object):
 
     def __init__(self, bg_color=(0, 0, 0)):
         """ Constructor
@@ -23,6 +23,8 @@ class GraphicBase:
         self.draw.clear(self.bg_color)
 
     def close_canvas(self):
+        """ Return old body and destroy drawing objects """
+
         appuifw.app.body = self.old_body
         self.canvas = None
         self.draw = None
@@ -32,17 +34,25 @@ class Graphics(GraphicBase):
     """ All drawing login here """
 
     def __init__(self):
-        pass
+        GraphicBase.__init__(self)
 
 
-class GameCore:
+class GameCore(object):
     """ All game logic here """
 
     def __init__(self):
-        pass
+        self.graphics = Graphics()
+
+    def draw_scene(self):
+        self.graphics.clear_display()
+
+    def quit(self):
+        """ Must be called when game ends """
+
+        self.graphics.close_canvas()
 
 
-class Game():
+class Game(object):
 
     INTERVAL = 0.01
 
@@ -51,8 +61,9 @@ class Game():
             Args:
                 screen_mode (str): normal, large, full
         """
+
         appuifw.app.screen = screen_mode
-        #
+        self.game_core = GameCore()
         appuifw.app.menu = [
             (u"Exit", self.set_exit)
         ]
@@ -60,20 +71,19 @@ class Game():
 
     def set_exit(self):
         """ Breaks game loop in self.run function """
-        self.exit_flag = True
 
-    def draw_scene(self):
-        """ Here all drawing functions """
-        self.clear_display()
+        self.exit_flag = True
 
     def run(self):
         """ Main game loop """
+
         appuifw.app.exit_key_handler = self.set_exit
         
         while not self.exit_flag:
-            self.draw_scene()
+            self.game_core.draw_scene()
             e32.ao_sleep(self.INTERVAL)
-        self.close_canvas()
+
+        self.game_core.quit()
 
 
 if __name__ == "__main__":
