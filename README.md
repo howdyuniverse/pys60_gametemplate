@@ -1,0 +1,1 @@
+Experimental game template for pys60 platform.
