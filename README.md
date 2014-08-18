@@ -1,4 +1,5 @@
-#### Experimental game template for pys60 platform.
+# PyS60 Game template
+###### Experimental game template for pys60 platform.
 
 class GraphicBase(object):
 
