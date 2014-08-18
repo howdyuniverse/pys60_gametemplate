@@ -16,12 +16,12 @@ class GraphicBase(object):
         self.bg_color = bg_color
         #
         self.old_body = appuifw.app.body
-        self.canvas = appuifw.Canvas(redraw_callback=self.clear_display)
+        self.canvas = appuifw.Canvas(redraw_callback=self.redraw)
         self.screen_size = self.canvas.size
         self.draw = graphics.Draw(self.canvas)
         appuifw.app.body = self.canvas
 
-    def clear_display(self, rect=()):
+    def redraw(self, rect=()):
         self.draw.clear(self.bg_color)
 
     def close_canvas(self):
@@ -45,8 +45,12 @@ class GameCore(object):
     def __init__(self):
         self.graphics = Graphics()
 
-    def draw_scene(self):
-        self.graphics.clear_display()
+    def tick(self):
+        self.graphics.redraw()
+
+    def cancel(self):
+        """ cancel all game flags/core loops """
+        pass
 
     def quit(self):
         """ Must be called when game ends """
@@ -76,6 +80,7 @@ class Game(object):
     def set_exit(self):
         """ Breaks game loop in self.run function """
 
+        self.game_core.cancel()
         self.exit_flag = True
 
     def run(self):
@@ -84,7 +89,7 @@ class Game(object):
         appuifw.app.exit_key_handler = self.set_exit
         
         while not self.exit_flag:
-            self.game_core.draw_scene()
+            self.game_core.tick()
             e32.ao_sleep(self.INTERVAL)
 
         self.game_core.quit()
