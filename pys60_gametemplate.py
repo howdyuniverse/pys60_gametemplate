@@ -18,18 +18,22 @@ class GraphicBase(object):
         self.old_body = appuifw.app.body
         self.canvas = appuifw.Canvas(redraw_callback=self.redraw)
         self.screen_size = self.canvas.size
-        self.draw = graphics.Draw(self.canvas)
+        self.buf = graphics.Draw(self.canvas)
         appuifw.app.body = self.canvas
 
+    def clear_buf(self):
+        self.buf.clear(self.bg_color)
+
     def redraw(self, rect=()):
-        self.draw.clear(self.bg_color)
+        if not self.buf:
+            self.canvas.blit(self.buf)
 
     def close_canvas(self):
         """ Return old body and destroy drawing objects """
 
         appuifw.app.body = self.old_body
         self.canvas = None
-        self.draw = None
+        self.buf = None
 
 
 class Graphics(GraphicBase):
@@ -45,8 +49,12 @@ class GameCore(object):
     def __init__(self):
         self.graphics = Graphics()
 
-    def tick(self):
+    def draw_scene(self):
+        self.graphics.clear_buf()
         self.graphics.redraw()
+
+    def tick(self):
+        self.draw_scene()
 
     def cancel(self):
         """ cancel all game flags/core loops """
